@@ -3,9 +3,10 @@ package com.arena
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material.Surface
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.arena.ui.navigation.NavGraph
 import com.arena.ui.theme.ArenaTheme
 
 class MainActivity : ComponentActivity() {
@@ -13,14 +14,18 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ArenaTheme {
-                Surface(color = MaterialTheme.colors.background) {
-                    MainScreen()
-                }
+                val navController = rememberNavController()
+                NavGraph(navController = navController)
             }
         }
     }
 }
 
+@Preview(showBackground = true)
 @Composable
-fun MainScreen() {
+fun DefaultPreview() {
+    ArenaTheme {
+        val navController = rememberNavController()
+        NavGraph(navController = navController)
+    }
 }

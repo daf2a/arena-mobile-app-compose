@@ -43,7 +43,6 @@ fun ArenaTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable 
     } else {
         LightColorPalette
     }
-
     MaterialTheme(
         colorScheme = colors,
         typography = Typography,

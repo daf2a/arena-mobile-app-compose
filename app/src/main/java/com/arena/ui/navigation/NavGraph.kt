@@ -11,7 +11,7 @@ import com.arena.ui.auth.OnboardingScreen2
 import com.arena.ui.auth.OnboardingGate1
 import com.arena.ui.auth.OnboardingGate2
 import com.arena.ui.splash.SplashScreen
-import com.arena.ui.user.UserHomeScreen
+import com.arena.ui.user.HomeScreen
 
 @Composable
 fun NavGraph(navController: NavHostController) {
@@ -23,6 +23,6 @@ fun NavGraph(navController: NavHostController) {
         composable("onboarding_gate_2") { OnboardingGate2(navController = navController) }
         composable("register_screen") { RegisterScreen(navController = navController) }
         composable("login_screen") { LoginScreen(navController = navController) }
-        composable("user_home") { UserHomeScreen() }
+        composable("user_home") { HomeScreen() }
     }
 }

@@ -90,13 +90,12 @@ fun RegisterScreen(navController: NavHostController) {
                     Text(text = "Google")
                 }
             }
-            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "Or",
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             TextField(
                 value = name,
                 onValueChange = { name = it },

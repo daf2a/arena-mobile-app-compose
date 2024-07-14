@@ -61,21 +61,27 @@ fun HomeScreen() {
     }
 
     Scaffold(
-        topBar = { HomeTopBar() },
         content = { paddingValues ->
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color(0xFFF7F7F9))
-                    .padding(paddingValues)
-                    .padding(start = 16.dp, top = 0.dp, bottom = 0.dp, end = 0.dp)
-            ) {
-                item { SportCategoriesRow(sportCategories) }
-                item { SectionHeader(title = "Venue Terpopuler") }
-                item { HorizontalVenueList(venues = popularVenues) }
-                item { InviteFriendBanner() }
-                item { SectionHeader(title = "Venue Terdekat") }
-                item { HorizontalVenueList(venues = nearbyVenues) }
+            LazyColumn {
+                item {
+                    HomeTopBar()
+                }
+                item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color(0xFFF7F7F9))
+                            .padding(paddingValues)
+                            .padding(start = 16.dp, top = 0.dp, bottom = 10.dp, end = 0.dp)
+                    ) {
+                        SportCategoriesRow(sportCategories)
+                        SectionHeader(title = "Venue Terpopuler")
+                        HorizontalVenueList(venues = popularVenues)
+                        InviteFriendBanner()
+                        SectionHeader(title = "Venue Terdekat")
+                        HorizontalVenueList(venues = nearbyVenues)
+                    }
+                }
             }
         },
         bottomBar = { HomeBottomNavigation(selectedTab = "home_screen", onTabSelected = { /* TODO: Handle tab selection */ }) }
@@ -89,7 +95,7 @@ fun InviteFriendBanner() {
         contentDescription = "Invite Friend",
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 8.dp, top = 0.dp, bottom = 0.dp, end = 24.dp),
+            .padding(start = 8.dp, top = 12.dp, bottom = 12.dp, end = 20.dp),
         contentScale = ContentScale.Fit
     )
 }
@@ -183,7 +189,7 @@ fun SearchBar() {
 fun SportCategoriesRow(categories: List<SportCategory>) {
     LazyRow(
         modifier = Modifier
-            .padding(start = 0.dp, top = 20.dp, bottom = 0.dp, end = 0.dp),
+            .padding(start = 0.dp, top = 20.dp, bottom = 20.dp, end = 0.dp),
         horizontalArrangement = Arrangement.spacedBy(0.dp)
     ) {
         items(categories.size) { index ->
@@ -211,7 +217,7 @@ fun SectionHeader(title: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 8.dp, end = 24.dp, top = 20.dp),
+            .padding(start = 8.dp, end = 20.dp, top = 0.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -239,7 +245,7 @@ fun VenueItem(venue: Venue) {
     Card(
         modifier = Modifier
             .width(275.dp)
-            .padding(vertical = 12.dp)
+            .padding(vertical = 8.dp)
             .clickable { /* TODO: Handle venue click */ },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
@@ -250,14 +256,14 @@ fun VenueItem(venue: Venue) {
                 contentDescription = venue.name,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(180.dp),
+                    .height(120.dp),
                 contentScale = ContentScale.Crop
             )
             IconButton(
                 onClick = { isFavorite = !isFavorite },
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(4.dp)
+                    .padding(0.dp)
             ) {
                 val iconRes = if (isFavorite) {
                     R.drawable.ic_favorite
@@ -272,7 +278,7 @@ fun VenueItem(venue: Venue) {
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Column(modifier = Modifier.padding(horizontal = 12.dp)) {
+        Column(modifier = Modifier.padding(horizontal = 14.dp)) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),

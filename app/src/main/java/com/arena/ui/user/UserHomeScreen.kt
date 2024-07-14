@@ -1,22 +1,26 @@
 package com.arena.ui.user
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,6 +28,7 @@ import coil.compose.rememberImagePainter
 import com.arena.R
 import com.arena.domain.model.SportCategory
 import com.arena.domain.model.Venue
+import com.arena.ui.theme.Orange
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,91 +48,112 @@ fun HomeScreen() {
 
     val popularVenues = remember {
         listOf(
-            Venue("BBS Futsal Sport", "Kepuh Gg 1D No.50, Surabaya", 5.0, "Rp 30.000 - 50.000/jam", R.drawable.iv_venue_1, listOf("Badminton", "Futsal")),
-            Venue("MPN Arena", "Sukolilo Gg 2, Surabaya", 4.8, "Rp 30.000 - 50.000/jam", R.drawable.iv_venue_2, listOf("Badminton"))
-            // Tambahkan venue lainnya...
+            Venue("BBS Futsal Sport", "Kepuh Gg 1D No.50, Surabaya", 5.0, "30.000 - 50.000", R.drawable.iv_venue_1, listOf("Badminton", "Futsal")),
+            Venue("MPN Arena", "Sukolilo Gg 2, Surabaya", 4.8, "30.000 - 50.000", R.drawable.iv_venue_2, listOf("Badminton"))
         )
     }
 
     val nearbyVenues = remember {
         listOf(
-            Venue("Aurora Sport", "BMC Sukolilo, Surabaya", 5.0, "Rp 30.000 - 50.000/jam", R.drawable.iv_venue_2, listOf("Badminton", "Futsal")),
-            Venue("BBS Futsal Sport", "Kepuh Gg 1D No.50, Surabaya", 5.0, "Rp 30.000 - 50.000/jam", R.drawable.iv_venue_1, listOf("Badminton", "Futsal")),
+            Venue("Aurora Sport", "BMC Sukolilo, Surabaya", 5.0, "30.000 - 50.000", R.drawable.iv_venue_2, listOf("Badminton", "Futsal")),
+            Venue("BBS Futsal Sport", "Kepuh Gg 1D No.50, Surabaya", 5.0, "30.000 - 50.000", R.drawable.iv_venue_1, listOf("Badminton", "Futsal")),
         )
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = "Lokasi saat ini", color = Color.White)
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFFFF6D3A)),
-                actions = {
-                    IconButton(onClick = { /* TODO: Open Notifications */ }) {
-                        Icon(painterResource(id = R.drawable.ic_notifications), contentDescription = "Notifications", tint = Color.White)
-                    }
-                }
-            )
-        },
+        topBar = { HomeTopBar() },
         content = { paddingValues ->
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color(0xFFF8F9FA))
+                    .background(Color(0xFFF7F7F9))
                     .padding(paddingValues)
-                    .padding(16.dp)
+                    .padding(start = 16.dp, top = 0.dp, bottom = 0.dp, end = 0.dp)
             ) {
-                item { LocationHeader() }
-                item { SearchBar() }
                 item { SportCategoriesRow(sportCategories) }
                 item { SectionHeader(title = "Venue Terpopuler") }
-                items(popularVenues) { venue -> VenueItem(venue) }
+                item { HorizontalVenueList(venues = popularVenues) }
+                item { InviteFriendBanner() }
                 item { SectionHeader(title = "Venue Terdekat") }
-                items(nearbyVenues) { venue -> VenueItem(venue) }
+                item { HorizontalVenueList(venues = nearbyVenues) }
             }
         },
-        bottomBar = {
-            NavigationBar {
-                NavigationBarItem(
-                    icon = { Icon(painterResource(id = R.drawable.ic_home), contentDescription = "Home") },
-                    label = { Text("Home") },
-                    selected = true,
-                    onClick = { /* TODO: Handle click */ }
-                )
-                NavigationBarItem(
-                    icon = { Icon(painterResource(id = R.drawable.ic_chat), contentDescription = "Chat") },
-                    label = { Text("Chat") },
-                    selected = false,
-                    onClick = { /* TODO: Handle click */ }
-                )
-                NavigationBarItem(
-                    icon = { Icon(painterResource(id = R.drawable.ic_booking), contentDescription = "Booking") },
-                    label = { Text("Booking") },
-                    selected = false,
-                    onClick = { /* TODO: Handle click */ }
-                )
-                NavigationBarItem(
-                    icon = { Icon(painterResource(id = R.drawable.ic_profile), contentDescription = "Profile") },
-                    label = { Text("Profile") },
-                    selected = false,
-                    onClick = { /* TODO: Handle click */ }
-                )
-            }
-        }
+        bottomBar = { HomeBottomNavigation(selectedTab = "home_screen", onTabSelected = { /* TODO: Handle tab selection */ }) }
     )
 }
 
 @Composable
-fun LocationHeader() {
+fun InviteFriendBanner() {
+    Image(
+        painter = painterResource(id = R.drawable.iv_invite_friend),
+        contentDescription = "Invite Friend",
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 8.dp, top = 0.dp, bottom = 0.dp, end = 24.dp),
+        contentScale = ContentScale.Fit
+    )
+}
+
+@Composable
+fun HomeTopBar() {
+    var hasNotifications by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFFFF6D3A), shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
-            .padding(16.dp)
+            .background(Orange, shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp))
+            .padding(20.dp)
     ) {
-        Text(text = "Surabaya, Jawa Timur", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
-        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Text(
+                    text = "Lokasi saat ini",
+                    color = Color.White,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 12.sp
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_location),
+                        contentDescription = "Location",
+                        tint = Color.White,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "Surabaya, Jawa Timur",
+                        color = Color.White,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 16.sp
+                    )
+                }
+            }
+            IconButton(onClick = { hasNotifications = !hasNotifications }) {
+                val icon: Painter = if (hasNotifications) {
+                    painterResource(id = R.drawable.ic_notifications_on)
+                } else {
+                    painterResource(id = R.drawable.ic_notifications_off)
+                }
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .background(color = Color.Transparent, shape = CircleShape)
+                        .size(40.dp)
+                        .border(width = 1.dp, color = Color.White, shape = CircleShape)
+                ) {
+                    Icon(painter = icon, contentDescription = "Notifications", tint = Color.White)
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+        SearchBar()
     }
 }
 
@@ -137,13 +163,16 @@ fun SearchBar() {
     TextField(
         value = "",
         onValueChange = { /* TODO: Handle text input */ },
-        placeholder = { Text(text = "Search") },
+        placeholder = { Text(text = "Search", color = Color.White) },
+        leadingIcon = {
+            Icon(painterResource(id = R.drawable.ic_search), contentDescription = "Search", tint = Color.White)
+        },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .background(Color.White, shape = RoundedCornerShape(24.dp)),
+            .background(Color(0xFFFA8F69), shape = RoundedCornerShape(32.dp)),
+        shape = RoundedCornerShape(12.dp),
         colors = TextFieldDefaults.textFieldColors(
-            containerColor = Color.White,
+            containerColor = Color(0xFFFA8F69),
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent
         )
@@ -153,8 +182,9 @@ fun SearchBar() {
 @Composable
 fun SportCategoriesRow(categories: List<SportCategory>) {
     LazyRow(
-        modifier = Modifier.padding(vertical = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        modifier = Modifier
+            .padding(start = 0.dp, top = 20.dp, bottom = 0.dp, end = 0.dp),
+        horizontalArrangement = Arrangement.spacedBy(0.dp)
     ) {
         items(categories.size) { index ->
             val category = categories[index]
@@ -179,64 +209,187 @@ fun SportCategoriesRow(categories: List<SportCategory>) {
 @Composable
 fun SectionHeader(title: String) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 8.dp, end = 24.dp, top = 20.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-        Text(text = "Lihat Semua", color = Color(0xFFFF6D3A), modifier = Modifier.clickable { /* TODO: Handle see all click */ })
+        Text(text = title, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
+        Text(text = "Lihat Semua", fontWeight = FontWeight.Medium, fontSize = 12.sp, color = Orange, modifier = Modifier.clickable { /* TODO: Handle see all click */ })
+    }
+}
+
+@Composable
+fun HorizontalVenueList(venues: List<Venue>) {
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(horizontal = 8.dp)
+    ) {
+        items(venues) { venue ->
+            VenueItem(venue)
+        }
     }
 }
 
 @Composable
 fun VenueItem(venue: Venue) {
+    var isFavorite by remember { mutableStateOf(false) }
+
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
+            .width(275.dp)
+            .padding(vertical = 12.dp)
             .clickable { /* TODO: Handle venue click */ },
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        Column {
+        Box {
             Image(
-                painter = rememberImagePainter(venue.image),
+                painter = painterResource(id = venue.image),
                 contentDescription = venue.name,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(180.dp),
                 contentScale = ContentScale.Crop
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = venue.name, fontWeight = FontWeight.Bold, fontSize = 16.sp, modifier = Modifier.padding(horizontal = 8.dp))
-            Text(text = venue.location, fontSize = 14.sp, modifier = Modifier.padding(horizontal = 8.dp))
-            Spacer(modifier = Modifier.height(4.dp))
+            IconButton(
+                onClick = { isFavorite = !isFavorite },
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(4.dp)
+            ) {
+                val iconRes = if (isFavorite) {
+                    R.drawable.ic_favorite
+                } else {
+                    R.drawable.ic_non_favorite
+                }
+                Image(
+                    painter = painterResource(id = iconRes),
+                    contentDescription = "Favorite",
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Column(modifier = Modifier.padding(horizontal = 12.dp)) {
             Row(
-                modifier = Modifier.padding(horizontal = 8.dp),
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                venue.tags.forEach { tag ->
+                Text(text = venue.name, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_star),
+                        contentDescription = "Rating",
+                        tint = Color(0xFFFFD700),
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(text = "${venue.rating}", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color(0xFFFB6D3A))
+                }
+            }
+            Text(
+                text = venue.location,
+                fontSize = 12.sp,
+                color = Color.Gray,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                venue.tags.forEachIndexed { index, tag ->
+                    val tagColor = when (index % 3) {
+                        0 -> Color(0xFF00BAA1)
+                        1 -> Color(0xFFFB6D3A)
+                        else -> Color(0xFF8873FB)
+                    }
+                    val backgroundColor = tagColor.copy(alpha = 0.15f)
                     Text(
                         text = tag,
                         fontSize = 12.sp,
-                        color = Color.White,
+                        fontWeight = FontWeight.SemiBold,
+                        color = tagColor,
                         modifier = Modifier
-                            .background(Color(0xFFFF6D3A), shape = RoundedCornerShape(12.dp))
-                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                            .background(backgroundColor, shape = RoundedCornerShape(8.dp))
+                            .padding(horizontal = 12.dp, vertical = 4.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                 }
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "Rp ${venue.priceRange}",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFFFF6D3A),
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color(0xFFFB6D3A))) {
+                        append("Rp ${venue.priceRange}")
+                    }
+                    append(" ")
+                    withStyle(style = SpanStyle(fontSize = 14.sp, color = Color.Gray)) {
+                        append("/jam")
+                    }
+                },
+                modifier = Modifier.padding(vertical = 4.dp)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+    }
+}
+
+
+@Composable
+fun HomeBottomNavigation(selectedTab: String, onTabSelected: (String) -> Unit) {
+    NavigationBar(
+        containerColor = Color.White,
+        modifier = Modifier
+            .height(72.dp)
+            .padding(vertical = 0.dp)
+
+    ) {
+        val items = listOf(
+            BottomNavItem("Home", R.drawable.ic_home, "home_screen"),
+            BottomNavItem("Chat", R.drawable.ic_chat, "chat_screen"),
+            BottomNavItem("Booking", R.drawable.ic_booking, "booking_screen"),
+            BottomNavItem("Profile", R.drawable.ic_profile, "profile_screen")
+        )
+
+        items.forEach { item ->
+            val isSelected = item.screenRoute == selectedTab
+            val iconColor = if (isSelected) Orange else Color(0xFFD2CFD6)
+            val textColor = if (isSelected) Orange else Color(0xFFD2CFD6)
+
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        painter = painterResource(id = item.icon),
+                        contentDescription = item.title,
+                        tint = iconColor
+                    )
+                },
+                label = {
+                    Text(
+                        text = item.title,
+                        color = textColor
+                    )
+                },
+                selected = isSelected,
+                onClick = { onTabSelected(item.screenRoute) },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = Orange,
+                    unselectedIconColor = Color(0xFFD2CFD6),
+                    selectedTextColor = Orange,
+                    unselectedTextColor = Color(0xFFD2CFD6),
+                    indicatorColor = Color.White
+                ),
+                modifier = Modifier.padding(vertical = 0.dp)
             )
         }
     }
 }
+
+data class BottomNavItem(val title: String, val icon: Int, val screenRoute: String)
 
 @Preview(showBackground = true)
 @Composable

@@ -1,26 +1,33 @@
 package com.arena.ui.venue
 
+import android.annotation.SuppressLint
+import android.os.Build
+import android.widget.CalendarView
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.navigation.ModalBottomSheetLayout
+import androidx.compose.material.navigation.bottomSheet
+import androidx.compose.material.navigation.rememberBottomSheetNavigator
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -29,10 +36,33 @@ import coil.compose.rememberImagePainter
 import com.arena.R
 import com.arena.domain.model.Venue
 import com.arena.ui.theme.Orange
+import androidx.compose.material3.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.times
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
+import java.time.LocalDate
 
-@OptIn(ExperimentalMaterial3Api::class)
+data class Court(
+    val name: String,
+    val type: String,
+    val size: String,
+    val price: String,
+    val image: Int
+)
+
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialNavigationApi::class)
 @Composable
 fun VenueDetailScreen(navController: NavController, venue: Venue) {
+    val selectedCourt = remember { mutableStateOf<Court?>(null) }
+    val selectedDate = remember { mutableStateOf(LocalDate.now()) }
+    val selectedStartTime = remember { mutableStateOf("") }
+    val selectedEndTime = remember { mutableStateOf("") }
     val facilities = listOf(
         "Free Wifi" to R.drawable.ic_wifi,
         "Parkir Mobil" to R.drawable.ic_parking,
@@ -48,6 +78,141 @@ fun VenueDetailScreen(navController: NavController, venue: Venue) {
         "Kantin" to R.drawable.ic_wifi
     )
 
+    val operationalHours = listOf(
+        "Senin - Jumat" to "18.00 - 23.00",
+        "Sabtu - Minggu" to "07.00 - 23.00"
+    )
+
+    var selectedImageIndex by remember { mutableStateOf(0) }
+    var isFavorite by remember { mutableStateOf(false) }
+    var isDescriptionExpanded by remember { mutableStateOf(false) }
+    var isCourtSheetVisible by remember { mutableStateOf(false) }
+    var isDateSheetVisible by remember { mutableStateOf(false) }
+    var isSessionSheetVisible by remember { mutableStateOf(false) }
+
+    val courts = listOf(
+        Court("Lapangan 1", "Badminton", "20x30 meter", "30.000", R.drawable.iv_venue_2),
+        Court("Lapangan 2", "Badminton", "20x30 meter", "30.000", R.drawable.iv_venue_1),
+        Court("Lapangan 3", "Badminton", "20x30 meter", "30.000", R.drawable.iv_venue_2),
+        Court("Lapangan 4", "Badminton", "20x30 meter", "30.000", R.drawable.iv_venue_1),
+        Court("Lapangan 5", "Badminton", "20x30 meter", "30.000", R.drawable.iv_venue_2),
+        Court("Lapangan 6", "Badminton", "20x30 meter", "30.000", R.drawable.iv_venue_1),
+        Court("Lapangan 7", "Badminton", "20x30 meter", "30.000", R.drawable.iv_venue_2),
+        Court("Lapangan 8", "Badminton", "20x30 meter", "30.000", R.drawable.iv_venue_1),
+        Court("Lapangan 9", "Badminton", "20x30 meter", "30.000", R.drawable.iv_venue_2),
+        Court("Lapangan 10", "Badminton", "20x30 meter", "30.000", R.drawable.iv_venue_1)
+    )
+
+    val bottomSheetNavigator = rememberBottomSheetNavigator()
+    val bottomNavController = rememberNavController(bottomSheetNavigator)
+
+    ModalBottomSheetLayout(
+        bottomSheetNavigator = bottomSheetNavigator,
+        sheetBackgroundColor = Color.Transparent,
+        sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+    ) {
+        NavHost(navController = bottomNavController, startDestination = "main") {
+            composable("main") {
+                MainContent(
+                    navController = navController,
+                    venue = venue,
+                    selectedImageIndex = selectedImageIndex,
+                    onImageClick = { selectedImageIndex = it },
+                    facilities = facilities,
+                    operationalHours = operationalHours,
+                    isFavorite = isFavorite,
+                    onFavoriteClick = { isFavorite = !isFavorite },
+                    isDescriptionExpanded = isDescriptionExpanded,
+                    onDescriptionToggle = { isDescriptionExpanded = !isDescriptionExpanded },
+                    onSelectCourtClick = { isCourtSheetVisible = true }
+                )
+            }
+            bottomSheet("court_sheet") {
+                BottomSheetContent(
+                    courts = courts,
+                    onCourtClick = { /* Handle court click */ },
+                    onSelectClick = {
+                        selectedCourt.value = it
+                        isCourtSheetVisible = false
+                        isDateSheetVisible = true
+                    },
+                    onDismiss = {
+                        isCourtSheetVisible = false
+                    }
+                )
+            }
+            bottomSheet("date_sheet") {
+                DateSelectionContent(
+                    selectedCourt = selectedCourt.value!!,
+                    selectedDate = selectedDate,
+                    onConfirmDate = {
+                        isDateSheetVisible = false
+                        isSessionSheetVisible = true
+                    },
+                    onDismiss = {
+                        isDateSheetVisible = false
+                    }
+                )
+            }
+            bottomSheet("session_sheet") {
+                SessionSelectionContent(
+                    selectedCourt = selectedCourt.value!!,
+                    selectedDate = selectedDate.value,
+                    selectedStartTime = selectedStartTime,
+                    selectedEndTime = selectedEndTime,
+                    onConfirmSession = {
+                        // Navigate to payment screen
+                    },
+                    onDismiss = {
+                        isSessionSheetVisible = false
+                    }
+                )
+            }
+        }
+    }
+
+    LaunchedEffect(isCourtSheetVisible) {
+        if (isCourtSheetVisible) {
+            bottomNavController.navigate("court_sheet")
+        } else {
+            bottomNavController.popBackStack("court_sheet", true)
+        }
+    }
+
+    LaunchedEffect(isDateSheetVisible) {
+        if (isDateSheetVisible) {
+            bottomNavController.navigate("date_sheet")
+        } else {
+            bottomNavController.popBackStack("date_sheet", true)
+        }
+    }
+
+    LaunchedEffect(isSessionSheetVisible) {
+        if (isSessionSheetVisible) {
+            bottomNavController.navigate("session_sheet")
+        } else {
+            bottomNavController.popBackStack("session_sheet", true)
+        }
+    }
+}
+
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MainContent(
+    navController: NavController,
+    venue: Venue,
+    selectedImageIndex: Int,
+    onImageClick: (Int) -> Unit,
+    facilities: List<Pair<String, Int>>,
+    operationalHours: List<Pair<String, String>>,
+    isFavorite: Boolean,
+    onFavoriteClick: () -> Unit,
+    isDescriptionExpanded: Boolean,
+    onDescriptionToggle: () -> Unit,
+    onSelectCourtClick: () -> Unit
+) {
     val images = listOf(
         R.drawable.iv_venue_2,
         R.drawable.iv_venue_1,
@@ -57,14 +222,6 @@ fun VenueDetailScreen(navController: NavController, venue: Venue) {
         R.drawable.iv_venue_1
     )
 
-    val operationalHours = listOf(
-        "Senin - Jumat" to "18.00 - 23.00",
-        "Sabtu - Minggu" to "07.00 - 23.00"
-    )
-
-    var selectedImageIndex by remember { mutableStateOf(0) }
-    var isFavorite by remember { mutableStateOf(false) }
-    var isDescriptionExpanded by remember { mutableStateOf(false) }
     val shortDescription = "BBS Futsal Sport adalah tempat yang bisa digunakan untuk keperluan pertandingan futsal yang"
     val longDescription = "BBS Futsal Sport adalah tempat yang bisa digunakan untuk keperluan pertandingan futsal yang sudah dilengkapi dengan rumput sintetis berkualitas tinggi. Fasilitas ini dirancang untuk memberikan pengalaman terbaik bagi para pemain futsal..."
 
@@ -78,7 +235,7 @@ fun VenueDetailScreen(navController: NavController, venue: Venue) {
                     }
                 },
                 actions = {
-                    IconButton(onClick = { isFavorite = !isFavorite }) {
+                    IconButton(onClick = onFavoriteClick) {
                         val iconRes = if (isFavorite) {
                             R.drawable.ic_favorite
                         } else {
@@ -101,7 +258,7 @@ fun VenueDetailScreen(navController: NavController, venue: Venue) {
                         .fillMaxSize()
                         .padding(paddingValues)
                         .verticalScroll(rememberScrollState())
-                        .padding(bottom = 75.dp)
+                        .padding(bottom = 50.dp)
                 ) {
                     Box(
                         modifier = Modifier
@@ -109,7 +266,7 @@ fun VenueDetailScreen(navController: NavController, venue: Venue) {
                             .clip(RoundedCornerShape(12.dp))
                     ) {
                         Image(
-                            painter = rememberImagePainter(images[selectedImageIndex]),
+                            painter = rememberImagePainter(venue.image),
                             contentDescription = "Venue Image",
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -120,6 +277,8 @@ fun VenueDetailScreen(navController: NavController, venue: Venue) {
                         Text(
                             text = "${selectedImageIndex + 1}/${images.size}",
                             color = Color.Black,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
                             modifier = Modifier
                                 .align(Alignment.BottomEnd)
                                 .padding(8.dp)
@@ -139,7 +298,7 @@ fun VenueDetailScreen(navController: NavController, venue: Venue) {
                                     .width(80.dp)
                                     .height(50.dp)
                                     .clip(RoundedCornerShape(8.dp))
-                                    .clickable { selectedImageIndex = index },
+                                    .clickable { onImageClick(index) },
                                 contentScale = ContentScale.Crop
                             )
                         }
@@ -196,9 +355,11 @@ fun VenueDetailScreen(navController: NavController, venue: Venue) {
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     ExpandableText(
-                        text = longDescription,
+                        text = if (isDescriptionExpanded) longDescription else shortDescription,
                         minimizedMaxLines = 3,
-                        modifier = Modifier.padding(horizontal = 20.dp)
+                        modifier = Modifier.padding(horizontal = 20.dp),
+                        isExpanded = isDescriptionExpanded,
+                        onExpand = onDescriptionToggle
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
@@ -276,27 +437,444 @@ fun VenueDetailScreen(navController: NavController, venue: Venue) {
                         contentScale = ContentScale.Fit
                     )
                 }
-                Box(
+                Button(
+                    onClick = onSelectCourtClick,
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = 20.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                        .align(Alignment.BottomCenter),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Orange
+                    ),
+                    shape = RoundedCornerShape(20),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
                 ) {
-                    FloatingActionButton(
-                        onClick = { /* TODO: Handle click */ },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp)
-                            .align(Alignment.BottomCenter),
-                        containerColor = Color(0xFFFB6D3A),
-                        shape = RoundedCornerShape(20),
-                    ) {
-                        Text(text = "Pilih Lapangan", fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
-                    }
+                    Text(text = "Pilih Lapangan", fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
                 }
             }
         }
     )
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BottomSheetContent(
+    courts: List<Court>,
+    onCourtClick: (Court) -> Unit,
+    onSelectClick: (Court) -> Unit,
+    onDismiss: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White, shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
+        Box(
+            modifier = Modifier
+                .width(1 / 5f * LocalConfiguration.current.screenWidthDp.dp)
+                .height(4.dp)
+                .background(Color(0xFFF2F3F6), shape = RoundedCornerShape(2.dp))
+                .align(Alignment.CenterHorizontally)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "${courts.size} Lapangan Tersedia",
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+        courts.forEach { court ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+                    .clickable { onCourtClick(court) },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = rememberImagePainter(court.image),
+                    contentDescription = court.name,
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(RoundedCornerShape(8.dp)),
+                    contentScale = ContentScale.Crop
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(text = court.name, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                    Text(text = court.type, fontSize = 14.sp, color = Color.Gray)
+                    Text(text = court.size, fontSize = 14.sp, color = Color.Gray)
+                    Text(
+                        text = "Rp ${court.price}/jam",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = Orange
+                    )
+                }
+                Button(
+                    onClick = { onSelectClick(court) },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Orange
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                ) {
+                    Text(text = "Pilih", color = Color.White)
+                }
+            }
+        }
+        DisposableEffect(Unit) {
+            onDispose {
+                onDismiss()
+            }
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DateSelectionContent(
+    selectedCourt: Court,
+    selectedDate: MutableState<LocalDate>,
+    onConfirmDate: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    val today = LocalDate.now()
+    val calendarState = remember { mutableStateOf(today) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White, shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
+        Box(
+            modifier = Modifier
+                .width(1 / 5f * LocalConfiguration.current.screenWidthDp.dp)
+                .height(4.dp)
+                .background(Color(0xFFF2F3F6), shape = RoundedCornerShape(2.dp))
+                .align(Alignment.CenterHorizontally)
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Pilih Tanggal",
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+            )
+            Text(
+                text = selectedCourt.name,
+                fontSize = 12.sp,
+                color = Color.White,
+                modifier = Modifier
+                    .background(Orange, shape = RoundedCornerShape(8.dp))
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+            )
+        }
+        Text(
+            text = selectedDate.value.toString(),
+            fontWeight = FontWeight.Bold,
+            fontSize = 14.sp,
+            color = Color.Gray,
+        )
+        CalendarView(
+            selectedDate = selectedDate.value,
+            onDateSelected = { selectedDate.value = it },
+            today = today
+        )
+        Button(
+            onClick = onConfirmDate,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Orange
+            ),
+            shape = RoundedCornerShape(12.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "Lanjut Pilih Sesi", color = Color.White)
+        }
+        DisposableEffect(Unit) {
+            onDispose {
+                onDismiss()
+            }
+        }
+    }
+}
+
+@SuppressLint("UnusedBoxWithConstraintsScope")
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CalendarView(
+    selectedDate: LocalDate,
+    onDateSelected: (LocalDate) -> Unit,
+    today: LocalDate
+) {
+    val daysOfWeek = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+    val firstDayOfMonth = selectedDate.withDayOfMonth(1)
+    val lastDayOfMonth = selectedDate.withDayOfMonth(selectedDate.lengthOfMonth())
+    val firstDayOfWeekOffset = (firstDayOfMonth.dayOfWeek.value % 7)
+    val daysInMonth = (1..lastDayOfMonth.dayOfMonth).toList()
+
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = {
+                onDateSelected(selectedDate.minusMonths(1))
+            }) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "Previous Month", tint = Color(0xFFFDB469))
+            }
+            Text(
+                text = "${selectedDate.month.name.lowercase().replaceFirstChar { it.uppercase() }} ${selectedDate.year}",
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+            IconButton(onClick = {
+                onDateSelected(selectedDate.plusMonths(1))
+            }) {
+                Icon(Icons.Default.ArrowForward, contentDescription = "Next Month", tint = Color(0xFFFDB469))
+            }
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+        BoxWithConstraints(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(7),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 400.dp),
+                content = {
+                    items(daysOfWeek) { day ->
+                        Text(
+                            text = day,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp,
+                            modifier = Modifier.padding(2.dp),
+                            color = Color.Gray,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                    items(firstDayOfWeekOffset) {
+                        Box(modifier = Modifier.size(30.dp))
+                    }
+                    items(daysInMonth) { day ->
+                        val date = firstDayOfMonth.plusDays((day - 1).toLong())
+                        val isToday = date == today
+                        val isSelected = date == selectedDate
+                        val isPastDate = date.isBefore(today)
+
+                        Box(
+                            modifier = Modifier
+                                .size(30.dp)
+                                .padding(2.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    when {
+                                        isSelected -> Orange
+                                        isToday -> Color.LightGray
+                                        else -> Color.Transparent
+                                    }
+                                )
+                                .clickable(enabled = !isPastDate) {
+                                    onDateSelected(date)
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = day.toString(),
+                                color = when {
+                                    isSelected || isToday -> Color.White
+                                    isPastDate -> Color(0xFFC5C6CB)
+                                    else -> Color(0xFF0D1634)
+                                },
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                }
+            )
+        }
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SessionSelectionContent(
+    selectedCourt: Court,
+    selectedDate: LocalDate,
+    selectedStartTime: MutableState<String>,
+    selectedEndTime: MutableState<String>,
+    onConfirmSession: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    val timeSlots = (0..47).map { String.format("%02d:%02d", it / 2, (it % 2) * 30) }
+    var expandedStart by remember { mutableStateOf(false) }
+    var expandedEnd by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White, shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
+        Box(
+            modifier = Modifier
+                .width(1 / 5f * LocalConfiguration.current.screenWidthDp.dp)
+                .height(4.dp)
+                .background(Color(0xFFF2F3F6), shape = RoundedCornerShape(2.dp))
+                .align(Alignment.CenterHorizontally)
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Pilih Sesi",
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+            )
+            Text(
+                text = selectedCourt.name,
+                fontSize = 12.sp,
+                color = Color.White,
+                modifier = Modifier
+                    .background(Orange, shape = RoundedCornerShape(8.dp))
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+            )
+        }
+        Text(
+            text = selectedDate.toString(),
+            fontWeight = FontWeight.Bold,
+            fontSize = 14.sp,
+            color = Color.Gray,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ExposedDropdownMenuBox(
+                expanded = expandedStart,
+                onExpandedChange = { expandedStart = !expandedStart }
+            ) {
+                TextField(
+                    value = selectedStartTime.value,
+                    onValueChange = { selectedStartTime.value = it },
+                    label = { Text("Start Time") },
+                    trailingIcon = null,
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = Color.White,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        cursorColor = Color.Black
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier
+                        .menuAnchor()
+                        .width(150.dp)
+                        .border(1.dp, Color(0xFF939393), RoundedCornerShape(12.dp)),
+                    readOnly = true,
+                    singleLine = true
+                )
+                ExposedDropdownMenu(
+                    expanded = expandedStart,
+                    onDismissRequest = { expandedStart = false }
+                ) {
+                    timeSlots.forEach { time ->
+                        DropdownMenuItem(
+                            text = { Text(text = time) },
+                            onClick = {
+                                selectedStartTime.value = time
+                                expandedStart = false
+                            }
+                        )
+                    }
+                }
+            }
+            Text(text = "-", modifier = Modifier.padding(horizontal = 8.dp))
+            ExposedDropdownMenuBox(
+                expanded = expandedEnd,
+                onExpandedChange = { expandedEnd = !expandedEnd }
+            ) {
+                TextField(
+                    value = selectedEndTime.value,
+                    onValueChange = { selectedEndTime.value = it },
+                    label = { Text("End Time") },
+                    trailingIcon = null,
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = Color.White,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        cursorColor = Color.Black
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier
+                        .menuAnchor()
+                        .width(150.dp)
+                        .border(1.dp, Color(0xFF939393), RoundedCornerShape(12.dp)),
+                    readOnly = true,
+                    singleLine = true
+                )
+                ExposedDropdownMenu(
+                    expanded = expandedEnd,
+                    onDismissRequest = { expandedEnd = false }
+                ) {
+                    timeSlots.forEach { time ->
+                        DropdownMenuItem(
+                            text = { Text(text = time) },
+                            onClick = {
+                                selectedEndTime.value = time
+                                expandedEnd = false
+                            }
+                        )
+                    }
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            onClick = onConfirmSession,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Orange
+            ),
+            shape = RoundedCornerShape(12.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "Lanjut ke Pembayaran", color = Color.White)
+        }
+        DisposableEffect(Unit) {
+            onDispose {
+                onDismiss()
+            }
+        }
+    }
+}
+
+
 
 @Composable
 fun FacilityItem(name: String, icon: Int) {
@@ -327,9 +905,13 @@ fun RatingItem(rating: Double) {
 }
 
 @Composable
-fun ExpandableText(text: String, minimizedMaxLines: Int = 1, modifier: Modifier = Modifier) {
-    var isExpanded by remember { mutableStateOf(false) }
-
+fun ExpandableText(
+    text: String,
+    minimizedMaxLines: Int = 1,
+    modifier: Modifier = Modifier,
+    isExpanded: Boolean,
+    onExpand: () -> Unit
+) {
     Column(modifier = modifier) {
         Text(
             text = text,
@@ -342,14 +924,22 @@ fun ExpandableText(text: String, minimizedMaxLines: Int = 1, modifier: Modifier 
             fontSize = 14.sp,
             text = if (isExpanded) "Tampilkan sedikit" else "Baca Selengkapnya...",
             color = Orange,
-            modifier = Modifier.clickable { isExpanded = !isExpanded }
+            modifier = Modifier.clickable { onExpand() }
         )
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun VenueDetailScreenPreview() {
-    val venue = Venue("BBS Futsal Sport", "Kepuh Gg 1D No.50, Surabaya", 5.0, "30.000 - 50.000", R.drawable.iv_venue_1, listOf("Badminton", "Futsal"))
+    val venue = Venue(
+        "BBS Futsal Sport",
+        "Kepuh Gg 1D No.50, Surabaya",
+        5.0,
+        "30.000 - 50.000",
+        R.drawable.iv_venue_1,
+        listOf("Badminton", "Futsal")
+    )
     VenueDetailScreen(navController = rememberNavController(), venue = venue)
 }

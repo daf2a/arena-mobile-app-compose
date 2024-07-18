@@ -67,6 +67,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("io.coil-kt:coil-compose:2.1.0")
-    implementation("com.google.code.gson:gson:2.8.8")
-    implementation("io.coil-kt:coil-compose:1.3.2")
+    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.8")
+    implementation("com.google.accompanist:accompanist-navigation-material:0.24.13-rc")
+    implementation("androidx.compose.material:material-navigation:1.7.0-beta01")
 }

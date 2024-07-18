@@ -6,7 +6,7 @@ val Black = Color(0xFF101010)
 val White = Color(0xFFFFFFFF)
 val WhiteBg = Color(0xFFF8F9FA)
 val Orange = Color(0xFFFB6D3A)
-val OrangeBg = Color(0xFFFFEBE3)
+val OrangeBg = Color(0xFFF8F9FA)
 
 val SelectedItemColor = Color(0xFF31B7AC)
 val UnselectedItemColor = Color(0xFFFFFFFF)

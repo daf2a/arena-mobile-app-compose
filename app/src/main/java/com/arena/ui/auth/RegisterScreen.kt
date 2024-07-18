@@ -1,5 +1,7 @@
 package com.arena.ui.auth
 
+import android.widget.Space
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,16 +23,21 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.arena.R
+import com.arena.ui.theme.Black
 import com.arena.ui.theme.Orange
 import com.arena.ui.theme.GreyInputBg
+import com.arena.ui.theme.OrangeBg
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(navController: NavHostController) {
     var name by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    var selectedRole by remember { mutableStateOf<String?>(null) }
 
     Box(
         modifier = Modifier
@@ -110,6 +117,21 @@ fun RegisterScreen(navController: NavHostController) {
                     unfocusedIndicatorColor = Color.Transparent
                 )
             )
+            Spacer(modifier = Modifier.height(16.dp))
+            TextField(
+                value = username,
+                onValueChange = { username = it },
+                label = { Text("Username") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Transparent, RoundedCornerShape(12.dp)),
+                shape = RoundedCornerShape(12.dp),
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = GreyInputBg,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
+                )
+            )
             Spacer(modifier = Modifier.height(8.dp))
             TextField(
                 value = email,
@@ -127,9 +149,31 @@ fun RegisterScreen(navController: NavHostController) {
             )
             Spacer(modifier = Modifier.height(8.dp))
             TextField(
-                value = password,
+                value = confirmPassword,
                 onValueChange = { password = it },
                 label = { Text("Password") },
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    val image = if (passwordVisible) R.drawable.ic_visibility_on else R.drawable.ic_visibility_off
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(painterResource(id = image), null)
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Transparent, RoundedCornerShape(12.dp)),
+                shape = RoundedCornerShape(12.dp),
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = GreyInputBg,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
+                )
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            TextField(
+                value = confirmPassword,
+                onValueChange = { confirmPassword = it },
+                label = { Text("Confirm Password") },
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
                     val image = if (passwordVisible) R.drawable.ic_visibility_on else R.drawable.ic_visibility_off
@@ -172,6 +216,40 @@ fun RegisterScreen(navController: NavHostController) {
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
+            Row {
+                Button(
+                    onClick = { selectedRole = "User" },
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(8.dp),
+                    colors = ButtonDefaults.buttonColors(OrangeBg)
+                ) {
+                    Text(
+                        text = "User",
+                        color = Orange)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_login),
+                        contentDescription = "User",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+                Button(
+                    onClick = { selectedRole = "Admin" },
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(8.dp),
+                    colors = ButtonDefaults.buttonColors(Orange)
+                ) {
+                    Text(text = "Mitra",)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_register),
+                        contentDescription = "Admin",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
             Button(
                 onClick = { navController.navigate("user_home") },
                 modifier = Modifier.fillMaxWidth(),

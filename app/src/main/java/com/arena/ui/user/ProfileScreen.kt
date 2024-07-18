@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -239,4 +240,10 @@ fun ProfileItem(icon: Painter, title: String, trailingText: String? = null, onCl
             )
         }
     }
+}
+
+@Preview
+@Composable
+fun ProfileScreenPreview() {
+    ProfileScreenPreview()
 }

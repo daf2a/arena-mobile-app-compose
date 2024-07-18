@@ -32,10 +32,37 @@ import com.arena.ui.theme.Orange
 import com.google.gson.Gson
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.arena.ui.components.UserBottomNavigation
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navController: NavController) {
+    var selectedTab by remember { mutableStateOf("user_home") }
+
+    Scaffold(
+        content = { paddingValues ->
+            HomeContent(navController, paddingValues)
+        },
+        bottomBar = {
+            UserBottomNavigation(
+                selectedTab = selectedTab,
+                onTabSelected = {
+                    selectedTab = it
+                    navController.navigate(it) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            )
+        }
+    )
+}
+
+@Composable
+fun HomeContent(navController: NavController, paddingValues: PaddingValues) {
     val sportCategories = remember {
         listOf(
             SportCategory("Futsal", R.drawable.iv_category_1),
@@ -63,32 +90,27 @@ fun HomeScreen(navController: NavController) {
         )
     }
 
-    Scaffold(
-        content = { paddingValues ->
-            LazyColumn {
-                item {
-                    HomeTopBar()
-                }
-                item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color(0xFFF7F7F9))
-                            .padding(paddingValues)
-                            .padding(start = 16.dp, top = 0.dp, bottom = 10.dp, end = 0.dp)
-                    ) {
-                        SportCategoriesRow(sportCategories)
-                        SectionHeader(title = "Venue Terpopuler")
-                        HorizontalVenueList(venues = popularVenues, navController = navController)
-                        InviteFriendBanner()
-                        SectionHeader(title = "Venue Terdekat")
-                        HorizontalVenueList(venues = nearbyVenues, navController = navController)
-                    }
-                }
+    LazyColumn {
+        item {
+            HomeTopBar()
+        }
+        item {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0xFFF7F7F9))
+                    .padding(paddingValues)
+                    .padding(start = 16.dp, top = 0.dp, bottom = 10.dp, end = 0.dp)
+            ) {
+                SportCategoriesRow(sportCategories)
+                SectionHeader(title = "Venue Terpopuler")
+                HorizontalVenueList(venues = popularVenues, navController = navController)
+                InviteFriendBanner()
+                SectionHeader(title = "Venue Terdekat")
+                HorizontalVenueList(venues = nearbyVenues, navController = navController)
             }
-        },
-        bottomBar = { HomeBottomNavigation(selectedTab = "home_screen", onTabSelected = { /* TODO: Handle tab selection */ }) }
-    )
+        }
+    }
 }
 
 @Composable
@@ -349,58 +371,6 @@ fun SectionHeader(title: String) {
         Text(text = "Lihat Semua", fontWeight = FontWeight.Medium, fontSize = 12.sp, color = Orange, modifier = Modifier.clickable { /* TODO: Handle see all click */ })
     }
 }
-
-@Composable
-fun HomeBottomNavigation(selectedTab: String, onTabSelected: (String) -> Unit) {
-    NavigationBar(
-        containerColor = Color.White,
-        modifier = Modifier
-            .height(72.dp)
-            .padding(vertical = 0.dp)
-
-    ) {
-        val items = listOf(
-            BottomNavItem("Home", R.drawable.ic_home, "home_screen"),
-            BottomNavItem("Chat", R.drawable.ic_chat, "chat_screen"),
-            BottomNavItem("Booking", R.drawable.ic_booking, "booking_screen"),
-            BottomNavItem("Profile", R.drawable.ic_profile, "profile_screen")
-        )
-
-        items.forEach { item ->
-            val isSelected = item.screenRoute == selectedTab
-            val iconColor = if (isSelected) Orange else Color(0xFFD2CFD6)
-            val textColor = if (isSelected) Orange else Color(0xFFD2CFD6)
-
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        painter = painterResource(id = item.icon),
-                        contentDescription = item.title,
-                        tint = iconColor
-                    )
-                },
-                label = {
-                    Text(
-                        text = item.title,
-                        color = textColor
-                    )
-                },
-                selected = isSelected,
-                onClick = { onTabSelected(item.screenRoute) },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = Orange,
-                    unselectedIconColor = Color(0xFFD2CFD6),
-                    selectedTextColor = Orange,
-                    unselectedTextColor = Color(0xFFD2CFD6),
-                    indicatorColor = Color.White
-                ),
-                modifier = Modifier.padding(vertical = 0.dp)
-            )
-        }
-    }
-}
-
-data class BottomNavItem(val title: String, val icon: Int, val screenRoute: String)
 
 @Preview(showBackground = true)
 @Composable

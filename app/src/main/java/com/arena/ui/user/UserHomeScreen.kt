@@ -36,7 +36,7 @@ import com.arena.ui.components.UserBottomNavigation
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavController) {
+fun UserHomeScreen(navController: NavController) {
     var selectedTab by remember { mutableStateOf("user_home") }
 
     Scaffold(
@@ -135,7 +135,7 @@ fun VenueItem(navController: NavController, venue: Venue) {
             .padding(vertical = 8.dp)
             .clickable {
                 val venueJson = Gson().toJson(venue)
-                navController.navigate("venue_detail/$venueJson")
+                navController.navigate("user_venue_detail/$venueJson")
             },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
@@ -375,5 +375,5 @@ fun SectionHeader(title: String) {
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen(navController = rememberNavController())
+    UserHomeScreen(navController = rememberNavController())
 }

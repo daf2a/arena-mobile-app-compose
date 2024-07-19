@@ -29,7 +29,7 @@ fun ListVenueScreen(navController: NavHostController) {
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { navController.navigate("new_venue_screen") }) {
+            FloatingActionButton(onClick = { navController.navigate("mitra_new_venue_screen") }) {
                 Icon(Icons.Default.Add, contentDescription = "Add Venue")
             }
         },
@@ -45,7 +45,7 @@ fun ListVenueScreen(navController: NavHostController) {
                 // List of Venues
                 // Example of one venue item
                 Button(
-                    onClick = { navController.navigate("detail_field_screen") },
+                    onClick = { navController.navigate("mitra_detail_field_screen") },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {

@@ -46,7 +46,7 @@ fun DetailFieldScreen(navController: NavHostController) {
                 Text(text = "Price: Rp 30.000 - Rp 60.000 /jam", style = MaterialTheme.typography.bodyMedium)
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
-                    onClick = { navController.navigate("edit_field_screen") },
+                    onClick = { navController.navigate("mitra_edit_field_screen") },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(text = "Edit Field")

@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,7 +20,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.arena.ui.theme.ArenaTheme
 import com.arena.R
-import com.google.ai.client.generativeai.Chat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,32 +36,7 @@ fun MitraHomeScreen(navController: NavHostController) {
             )
         },
         bottomBar = {
-            BottomNavigation {
-                BottomNavigationItem(
-                    icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
-                    label = { Text("Home") },
-                    selected = true,
-                    onClick = { /* Handle home click */ }
-                )
-                BottomNavigationItem(
-                    icon = { Icon(Icons.Default.Chat, contentDescription = "Chat") },
-                    label = { Text("Chat") },
-                    selected = false,
-                    onClick = { /* Handle chat click */ }
-                )
-                BottomNavigationItem(
-                    icon = { Icon(Icons.Default.AttachMoney, contentDescription = "Finance") },
-                    label = { Text("Finance") },
-                    selected = false,
-                    onClick = { /* Handle finance click */ }
-                )
-                BottomNavigationItem(
-                    icon = { Icon(Icons.Default.AccountCircle, contentDescription = "Profile") },
-                    label = { Text("Profile") },
-                    selected = false,
-                    onClick = { /* Handle profile click */ }
-                )
-            }
+            BottomNavigation(navController = navController)
         },
         content = { paddingValues ->
             Column(
@@ -85,19 +60,51 @@ fun MitraHomeScreen(navController: NavHostController) {
 }
 
 @Composable
-fun BottomNavigation(content: @Composable () -> Unit) {
-        TODO("Not yet implemented")
+fun BottomNavigation(navController: NavHostController) {
+    NavigationBar(
+        containerColor = Color.White,
+        modifier = Modifier.height(72.dp)
+    ) {
+        val items = listOf(
+            BottomNavItem("Home", R.drawable.ic_home, "mitra_home_screen"),
+            BottomNavItem("Chat", R.drawable.ic_chat, "mitra_chat_screen"),
+            BottomNavItem("Booking", R.drawable.ic_booking, "mitra_booking_screen"),
+            BottomNavItem("Profile", R.drawable.ic_profile, "mitra_profile_screen")
+        )
+
+        items.forEach { item ->
+            val isSelected = navController.currentBackStackEntry?.destination?.route == item.screenRoute
+            val iconColor = if (isSelected) Color.Blue else Color.Gray
+            val textColor = if (isSelected) Color.Blue else Color.Gray
+
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        painter = painterResource(id = item.icon),
+                        contentDescription = item.title,
+                        tint = iconColor
+                    )
+                },
+                label = {
+                    Text(
+                        text = item.title,
+                        color = textColor
+                    )
+                },
+                selected = isSelected,
+                onClick = {
+                    navController.navigate(item.screenRoute) {
+                        popUpTo(navController.graph.startDestinationId) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            )
+        }
+    }
 }
 
-@Composable
-fun BottomNavigationItem(
-    icon: @Composable () -> Unit,
-    label: @Composable () -> Unit,
-    selected: Boolean,
-    onClick: () -> Unit,
-) {
-    TODO("Not yet implemented")
-}
+data class BottomNavItem(val title: String, val icon: Int, val screenRoute: String)
 
 @Composable
 fun LocationSection() {
@@ -120,8 +127,8 @@ fun DashboardSection() {
             horizontalArrangement = Arrangement.SpaceAround
         ) {
             DashboardButton(icon = Icons.Default.List, label = "Venue List")
-            DashboardButton(icon = Icons.Default.History, label = "Order History")
-            DashboardButton(icon = Icons.Default.Chat, label = "Chat")
+            DashboardButton(icon = Icons.Default.Done, label = "Order History")
+            DashboardButton(icon = Icons.Default.Done, label = "Chat")
         }
     }
 }
@@ -129,7 +136,9 @@ fun DashboardSection() {
 @Composable
 fun <ImageVector> DashboardButton(icon: ImageVector, label: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Icon(icon, contentDescription = label)
+        IconButton(onClick = { /* Handle click */ }) {
+            Icons.Default.Done
+        }
         Text(text = label)
     }
 }
@@ -166,7 +175,7 @@ fun VenueCard(navController: NavHostController, index: Int) {
     ) {
         Column {
             Image(
-                painter = painterResource(id = R.drawable.placeholder), // Replace with your image
+                painter = painterResource(id = R.drawable.iv_venue_2),
                 contentDescription = "Venue Image",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -195,7 +204,7 @@ fun VenueCard(navController: NavHostController, index: Int) {
                     color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.weight(1f))
-                Button(onClick = { navController.navigate("edit_field_screen") }) {
+                Button(onClick = { navController.navigate("mitra_edit_field_screen") }) {
                     Text(text = "Edit")
                 }
             }

@@ -26,7 +26,7 @@ import com.arena.ui.components.UserBottomNavigation
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(navController: NavController) {
-    var selectedTab by remember { mutableStateOf("chat_screen") }
+    var selectedTab by remember { mutableStateOf("user_chat_screen") }
     val chats = remember {
         listOf(
             Chat("Aurora Futsal", "Aurora Futsal is typing...", R.drawable.iv_category_5, "14:28", 1),
@@ -117,7 +117,7 @@ fun ChatItem(chat: Chat, navController: NavController) {
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                navController.navigate("chat_room/${chat.name}")
+                navController.navigate("user_chat_room/${chat.name}")
             }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically

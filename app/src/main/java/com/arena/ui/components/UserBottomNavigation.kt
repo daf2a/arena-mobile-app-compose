@@ -23,9 +23,9 @@ fun UserBottomNavigation(selectedTab: String, onTabSelected: (String) -> Unit) {
     ) {
         val items = listOf(
             BottomNavItem("Home", R.drawable.ic_home, "user_home"),
-            BottomNavItem("Chat", R.drawable.ic_chat, "chat_screen"),
-            BottomNavItem("Booking", R.drawable.ic_booking, "booking_screen"),
-            BottomNavItem("Profile", R.drawable.ic_profile, "profile_screen")
+            BottomNavItem("Chat", R.drawable.ic_chat, "user_chat_screen"),
+            BottomNavItem("Booking", R.drawable.ic_booking, "user_booking_screen"),
+            BottomNavItem("Profile", R.drawable.ic_profile, "user_profile_screen")
         )
 
         items.forEach { item ->

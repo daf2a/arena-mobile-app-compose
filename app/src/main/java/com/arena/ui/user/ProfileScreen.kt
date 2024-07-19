@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
 import com.arena.R
 import com.arena.ui.components.UserBottomNavigation
@@ -31,7 +32,7 @@ import com.arena.ui.theme.Orange
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(navController: NavController) {
-    var selectedTab by remember { mutableStateOf("profile_screen") }
+    var selectedTab by remember { mutableStateOf("user_profile_screen") }
 
     Scaffold(
         topBar = {
@@ -245,5 +246,5 @@ fun ProfileItem(icon: Painter, title: String, trailingText: String? = null, onCl
 @Preview
 @Composable
 fun ProfileScreenPreview() {
-    ProfileScreenPreview()
+    ProfileScreen(navController = rememberNavController())
 }

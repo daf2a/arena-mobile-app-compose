@@ -48,7 +48,7 @@ fun MitraProfileScreen() {
 
     Scaffold(
         bottomBar = {
-            MitraHomeBottomNavigation(selectedTab = "profile_screen", onTabSelected = {})
+            MitraHomeBottomNavigation(selectedTab = "user_profile_screen", onTabSelected = {})
         }
     ) {
         Column(
@@ -272,10 +272,10 @@ fun MitraHomeBottomNavigation(selectedTab: String, onTabSelected: (String) -> Un
 
     ) {
         val items = listOf(
-            BottomNavItem("Home", R.drawable.ic_home, "home_screen"),
-            BottomNavItem("Chat", R.drawable.ic_chat, "chat_screen"),
-            BottomNavItem("Booking", R.drawable.ic_booking, "booking_screen"),
-            BottomNavItem("Profile", R.drawable.ic_profile, "profile_screen")
+            BottomNavItem("Home", R.drawable.ic_home, "mitra_home_screen"),
+            BottomNavItem("Chat", R.drawable.ic_chat, "user_chat_screen"),
+            BottomNavItem("Booking", R.drawable.ic_booking, "user_booking_screen"),
+            BottomNavItem("Profile", R.drawable.ic_profile, "user_profile_screen")
         )
 
         items.forEach { item ->

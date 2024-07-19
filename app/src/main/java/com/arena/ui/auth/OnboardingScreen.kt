@@ -1,5 +1,6 @@
 package com.arena.ui.auth
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
@@ -26,6 +27,10 @@ import com.arena.ui.theme.ArenaTheme
 import com.arena.ui.theme.Orange
 import com.arena.ui.theme.OrangeBg
 import androidx.compose.material3.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 @Composable
 fun OnboardingScreen1(navController: NavHostController) {
@@ -155,7 +160,10 @@ fun OnboardingGate1(navController: NavHostController) {
             modifier = Modifier.padding(horizontal = 64.dp)
         ) {
             Button(
-                onClick = { navController.navigate("onboarding_gate_2") },
+                onClick = {
+                    val role = 3
+                    navController.navigate("onboarding_gate_2/$role")
+                },
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = OrangeBg,
@@ -172,7 +180,10 @@ fun OnboardingGate1(navController: NavHostController) {
                 }
             }
             Button(
-                onClick = { navController.navigate("onboarding_gate_2") },
+                onClick = {
+                    val role = 2
+                    navController.navigate("onboarding_gate_2/$role")
+                },
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Orange,
@@ -192,8 +203,11 @@ fun OnboardingGate1(navController: NavHostController) {
     }
 }
 
+
 @Composable
-fun OnboardingGate2(navController: NavHostController) {
+fun OnboardingGate2(navController: NavHostController, role: Int) {
+    Log.d("Role", role.toString())
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -234,7 +248,9 @@ fun OnboardingGate2(navController: NavHostController) {
             modifier = Modifier.padding(horizontal = 64.dp)
         ) {
             Button(
-                onClick = { navController.navigate("login_screen") },
+                onClick = {
+                    navController.navigate("login_screen/$role")
+                },
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = OrangeBg,
@@ -251,7 +267,9 @@ fun OnboardingGate2(navController: NavHostController) {
                 }
             }
             Button(
-                onClick = { navController.navigate("register_screen") },
+                onClick = {
+                    navController.navigate("register_screen/$role")
+                },
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Orange,
@@ -270,6 +288,7 @@ fun OnboardingGate2(navController: NavHostController) {
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
@@ -299,7 +318,7 @@ fun PreviewOnboardingGate1() {
 @Composable
 fun PreviewOnboardingGate2() {
     ArenaTheme {
-        OnboardingGate2(navController = rememberNavController())
+        OnboardingGate2(navController = rememberNavController(), role = 2)
     }
 }
 

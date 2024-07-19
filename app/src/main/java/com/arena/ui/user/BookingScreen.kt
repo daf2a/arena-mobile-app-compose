@@ -22,7 +22,7 @@ import com.arena.ui.theme.Orange
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookingScreen(navController: NavController) {
-    var selectedTab by remember { mutableStateOf("booking_screen") }
+    var selectedTab by remember { mutableStateOf("user_booking_screen") }
 
     Scaffold(
         content = { paddingValues ->

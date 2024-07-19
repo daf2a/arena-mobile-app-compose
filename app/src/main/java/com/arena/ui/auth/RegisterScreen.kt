@@ -1,7 +1,6 @@
 package com.arena.ui.auth
 
-import android.widget.Space
-import androidx.compose.foundation.BorderStroke
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -23,21 +21,26 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.arena.R
-import com.arena.ui.theme.Black
+import com.arena.data.network.RetrofitInstance
+import com.arena.data.repository.AuthRepository
 import com.arena.ui.theme.Orange
 import com.arena.ui.theme.GreyInputBg
-import com.arena.ui.theme.OrangeBg
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterScreen(navController: NavHostController) {
+fun RegisterScreen(navController: NavHostController, role: Int) {
     var name by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    var registerError by remember { mutableStateOf<String?>(null) }
     var passwordVisible by remember { mutableStateOf(false) }
-    var selectedRole by remember { mutableStateOf<String?>(null) }
+    val authRepository = AuthRepository(RetrofitInstance.api)
 
     Box(
         modifier = Modifier
@@ -117,7 +120,7 @@ fun RegisterScreen(navController: NavHostController) {
                     unfocusedIndicatorColor = Color.Transparent
                 )
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             TextField(
                 value = username,
                 onValueChange = { username = it },
@@ -136,7 +139,7 @@ fun RegisterScreen(navController: NavHostController) {
             TextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text("Email/Phone Number") },
+                label = { Text("Email") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color.Transparent, RoundedCornerShape(12.dp)),
@@ -149,14 +152,14 @@ fun RegisterScreen(navController: NavHostController) {
             )
             Spacer(modifier = Modifier.height(8.dp))
             TextField(
-                value = confirmPassword,
+                value = password,
                 onValueChange = { password = it },
                 label = { Text("Password") },
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
                     val image = if (passwordVisible) R.drawable.ic_visibility_on else R.drawable.ic_visibility_off
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                        Icon(painterResource(id = image), null)
+                        Icon(painterResource(id = image), contentDescription = null)
                     }
                 },
                 modifier = Modifier
@@ -178,7 +181,7 @@ fun RegisterScreen(navController: NavHostController) {
                 trailingIcon = {
                     val image = if (passwordVisible) R.drawable.ic_visibility_on else R.drawable.ic_visibility_off
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                        Icon(painterResource(id = image), null)
+                        Icon(painterResource(id = image), contentDescription = null)
                     }
                 },
                 modifier = Modifier
@@ -191,83 +194,48 @@ fun RegisterScreen(navController: NavHostController) {
                     unfocusedIndicatorColor = Color.Transparent
                 )
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            var checked by remember { mutableStateOf(false) }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.clickable { checked = !checked }
-            ) {
-                Checkbox(
-                    checked = checked,
-                    onCheckedChange = { checked = it },
-                    colors = CheckboxDefaults.colors(
-                        checkedColor = Orange,
-                        uncheckedColor = Color.Gray,
-                        checkmarkColor = Color.White
-                    )
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "I’m agree to The Terms of Service and Privacy Policy",
-                    style = MaterialTheme.typography.bodySmall,
-                    textAlign = TextAlign.Start,
-                    color = Orange,
-                    modifier = Modifier.clickable { /* Navigate to terms of service */ }
-                )
-            }
             Spacer(modifier = Modifier.height(24.dp))
-            Row {
-                Button(
-                    onClick = { selectedRole = "User" },
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(8.dp),
-                    colors = ButtonDefaults.buttonColors(OrangeBg)
-                ) {
-                    Text(
-                        text = "User",
-                        color = Orange)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_login),
-                        contentDescription = "User",
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-                Button(
-                    onClick = { selectedRole = "Admin" },
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(8.dp),
-                    colors = ButtonDefaults.buttonColors(Orange)
-                ) {
-                    Text(text = "Mitra",)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_register),
-                        contentDescription = "Admin",
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            }
             Button(
-                onClick = { navController.navigate("user_home") },
+                onClick = {
+                    if (password == confirmPassword) {
+                        Log.d("RegisterScreen", "name = $name, username = $username, email = $email, password = $password, role = $role")
+                        CoroutineScope(Dispatchers.IO).launch {
+                            val response = authRepository.register(name, username, email, password, role)
+                            withContext(Dispatchers.Main) {
+                                if (response.isSuccessful && response.body()?.status == "success") {
+                                    if (role == 2) {
+                                        navController.navigate("mitra_home_screen")
+                                    } else {
+                                        navController.navigate("user_home")
+                                    }
+                                } else {
+                                    registerError = response.body()?.message ?: "Registration failed"
+                                }
+                            }
+                        }
+                    } else {
+                        registerError = "Passwords do not match"
+                    }
+                },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(containerColor = Orange)
             ) {
                 Text(text = "Create Account")
+            }
+            registerError?.let {
+                Text(text = it, color = Color.Red, style = MaterialTheme.typography.bodySmall)
             }
             Spacer(modifier = Modifier.height(16.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text(text = "Don’t have an account? ", style = MaterialTheme.typography.bodyMedium)
+                Text(text = "Already have an account? ", style = MaterialTheme.typography.bodyMedium)
                 Text(
                     text = "Sign In",
                     style = MaterialTheme.typography.bodyMedium,
                     color = Orange,
-                    modifier = Modifier.clickable { navController.navigate("login_screen") }
+                    modifier = Modifier.clickable { navController.navigate("login_screen/$role") }
                 )
             }
         }
@@ -277,5 +245,5 @@ fun RegisterScreen(navController: NavHostController) {
 @Preview(showBackground = true)
 @Composable
 fun RegisterScreenPreview() {
-    RegisterScreen(navController = rememberNavController())
+    RegisterScreen(navController = rememberNavController(), role = 3)
 }

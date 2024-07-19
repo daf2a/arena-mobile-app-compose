@@ -58,7 +58,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.generativeai)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -72,4 +71,10 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata:1.6.8")
     implementation("com.google.accompanist:accompanist-navigation-material:0.24.13-rc")
     implementation("androidx.compose.material:material-navigation:1.7.0-beta01")
+
+    // retrofit converter
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
+
 }

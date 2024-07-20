@@ -9,5 +9,6 @@ data class RegisterResponse(
 data class LoginResponse(
     val message: String,
     val status: String,
-    val token: String
+    val token: String,
+    val role: String
 )

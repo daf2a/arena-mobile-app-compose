@@ -10,10 +10,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.arena.domain.model.Venue
 import com.arena.ui.auth.LoginScreen
-import com.arena.ui.auth.OnboardingGate1
-import com.arena.ui.auth.OnboardingGate2
-import com.arena.ui.auth.OnboardingScreen1
-import com.arena.ui.auth.OnboardingScreen2
+import com.arena.ui.auth.OnboardingGate
+import com.arena.ui.auth.OnboardingScreen
 import com.arena.ui.auth.RegisterScreen
 import com.arena.ui.mitra.*
 import com.arena.ui.user.booking.BookingScreen
@@ -31,27 +29,23 @@ import com.google.gson.Gson
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NavGraph(startDestination: String = "user_home") {
+fun NavGraph(startDestination: String = "splash_screen") {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = startDestination) {
         // Splash
         composable("splash_screen") { SplashScreen(navController = navController) }
 
         // Auth
-        composable("onboarding_screen_1") { OnboardingScreen1(navController = navController) }
-        composable("onboarding_screen_2") { OnboardingScreen2(navController = navController) }
-        composable("onboarding_gate_1") { OnboardingGate1(navController = navController) }
-        composable("onboarding_gate_2/{role}") { backStackEntry ->
-            val role = backStackEntry.arguments?.getString("role")?.toInt() ?: 0
-            OnboardingGate2(navController = navController, role = role)
+        composable("onboarding_screen") { OnboardingScreen(navController = navController) }
+        composable("onboarding_gate") { backStackEntry ->
+            OnboardingGate(navController = navController)
         }
         composable("register_screen/{role}") { backStackEntry ->
             val role = backStackEntry.arguments?.getString("role")?.toInt() ?: 0
             RegisterScreen(navController = navController, role = role)
         }
-        composable("login_screen/{role}") { backStackEntry ->
-            val role = backStackEntry.arguments?.getString("role")?.toInt() ?: 0
-            LoginScreen(navController = navController, role = role)
+        composable("login_screen") { backStackEntry ->
+            LoginScreen(navController = navController)
         }
 
         // User

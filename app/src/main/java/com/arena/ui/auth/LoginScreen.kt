@@ -32,12 +32,13 @@ import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(navController: NavHostController, role: Int) {
+fun LoginScreen(navController: NavHostController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var loginError by remember { mutableStateOf<String?>(null) }
     var passwordVisible by remember { mutableStateOf(false) }
     val authRepository = AuthRepository(RetrofitInstance.api)
+    var role by remember { mutableStateOf("3") }
 
     Box(
         modifier = Modifier
@@ -153,13 +154,14 @@ fun LoginScreen(navController: NavHostController, role: Int) {
                         val response = authRepository.login(email, password)
                         withContext(Dispatchers.Main) {
                             if (response.isSuccessful && response.body()?.status == "success") {
-                                if (role == 2) {
+                                (response.body()?.role ?: "").also { role = it }
+                                if (role == "2") {
                                     navController.navigate("mitra_home_screen")
                                 } else {
                                     navController.navigate("user_home")
                                 }
                             } else {
-                                loginError = response.body()?.message ?: "Login failed"
+                                loginError = response.body()?.message ?: "Login Failed"
                             }
                         }
                     }
@@ -194,6 +196,6 @@ fun LoginScreen(navController: NavHostController, role: Int) {
 @Composable
 fun LoginScreenPreview() {
     ArenaTheme {
-        LoginScreen(navController = rememberNavController(), role = 3)
+        LoginScreen(navController = rememberNavController())
     }
 }

@@ -3,7 +3,6 @@ package com.arena.ui.navigation
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -15,18 +14,19 @@ import com.arena.ui.auth.OnboardingScreen1
 import com.arena.ui.auth.OnboardingScreen2
 import com.arena.ui.auth.RegisterScreen
 import com.arena.ui.mitra.*
-import com.arena.ui.user.BookingScreen
-import com.arena.ui.user.ChatRoomScreen
+import com.arena.ui.user.booking.BookingScreen
+import com.arena.ui.user.chat.ChatRoomScreen
 import com.arena.ui.splash.SplashScreen
-import com.arena.ui.user.ChatScreen
-import com.arena.ui.user.UserHomeScreen
-import com.arena.ui.user.ProfileScreen
-import com.arena.ui.venue.VenueDetailScreen
+import com.arena.ui.user.chat.ChatScreen
+import com.arena.ui.user.home.detailvenue.VenueDetailScreen
+import com.arena.ui.user.home.homescreen.UserHomeScreen
+import com.arena.ui.user.home.selectfield.SelectFieldScreen
+import com.arena.ui.user.profile.ProfileScreen
 import com.google.gson.Gson
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NavGraph(startDestination: String = "splash_screen") {
+fun NavGraph(startDestination: String = "user_home") {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = startDestination) {
         // Splash
@@ -55,6 +55,9 @@ fun NavGraph(startDestination: String = "splash_screen") {
             val venueJson = backStackEntry.arguments?.getString("venue")
             val venue = Gson().fromJson(venueJson, Venue::class.java)
             VenueDetailScreen(navController = navController, venue = venue)
+        }
+        composable("select_field_screen") {
+            SelectFieldScreen(navController = navController)
         }
         composable("user_chat_screen") { ChatScreen(navController = navController) }
         composable("user_chat_room/{chatName}") { backStackEntry ->

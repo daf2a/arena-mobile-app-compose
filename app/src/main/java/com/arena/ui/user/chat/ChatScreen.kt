@@ -1,4 +1,4 @@
-package com.arena.ui.user
+package com.arena.ui.user.chat
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

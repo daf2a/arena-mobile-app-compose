@@ -1,4 +1,4 @@
-package com.arena.ui.user
+package com.arena.ui.user.booking
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

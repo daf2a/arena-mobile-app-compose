@@ -1,4 +1,4 @@
-package com.arena.ui.user
+package com.arena.ui.user.profile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,8 +8,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,7 +25,6 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
 import com.arena.R
 import com.arena.ui.components.UserBottomNavigation
-import com.arena.ui.theme.Orange
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

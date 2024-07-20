@@ -1,10 +1,12 @@
-package com.arena.ui.user.home.selectfield
+package com.arena.ui.user.home.orderreview
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -12,12 +14,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.arena.R
-import com.arena.ui.theme.Orange
+import com.arena.ui.user.home.selectfield.SelectFieldScreen
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectFieldScreen(navController: NavController) {
+fun OrderReviewScreen(navController: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -35,19 +36,16 @@ fun SelectFieldScreen(navController: NavController) {
                     .fillMaxSize()
                     .padding(paddingValues),
             ) {
-                FieldSelectionComponent()
-                DateSelectionComponent()
-                TimeSlotSelectionComponent(onClick = {
-                    navController.navigate("order_review_screen")
-                })
+                Text(
+                    text = "Pilih jenis lapangan yang ingin kamu mainkan",
+                )
             }
         }
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
-fun SelectFieldScreenPreview() {
-    SelectFieldScreen(navController = rememberNavController())
+fun OrderReviewScreenPreview() {
+    OrderReviewScreen(navController = rememberNavController())
 }

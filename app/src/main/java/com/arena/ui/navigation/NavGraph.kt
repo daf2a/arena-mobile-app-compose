@@ -20,6 +20,7 @@ import com.arena.ui.splash.SplashScreen
 import com.arena.ui.user.chat.ChatScreen
 import com.arena.ui.user.home.detailvenue.VenueDetailScreen
 import com.arena.ui.user.home.homescreen.UserHomeScreen
+import com.arena.ui.user.home.orderreview.OrderReviewScreen
 import com.arena.ui.user.home.selectfield.SelectFieldScreen
 import com.arena.ui.user.profile.ProfileScreen
 import com.google.gson.Gson
@@ -58,6 +59,9 @@ fun NavGraph(startDestination: String = "user_home") {
         }
         composable("select_field_screen") {
             SelectFieldScreen(navController = navController)
+        }
+        composable("order_review_screen") {
+            OrderReviewScreen(navController = navController)
         }
         composable("user_chat_screen") { ChatScreen(navController = navController) }
         composable("user_chat_room/{chatName}") { backStackEntry ->

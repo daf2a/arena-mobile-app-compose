@@ -32,11 +32,11 @@ data class TimeSlot(val time: String, val price: Int, val available: Boolean)
 fun TimeSlotSelectionComponent(onClick: () -> Unit) {
     val timeSlots = listOf(
         TimeSlot("01:00", 50, false),
-        TimeSlot("02:00", 50, true),
-        TimeSlot("03:00", 50, true),
-        TimeSlot("04:00", 50, true),
+        TimeSlot("02:00", 50, false),
+        TimeSlot("03:00", 50, false),
+        TimeSlot("04:00", 50, false),
         TimeSlot("05:00", 50, false),
-        TimeSlot("06:00", 50, true),
+        TimeSlot("06:00", 50, false),
         TimeSlot("07:00", 50, true),
         TimeSlot("08:00", 50, true),
         TimeSlot("09:00", 50, true),
@@ -111,13 +111,13 @@ fun TimeSlotSelectionComponent(onClick: () -> Unit) {
                 .padding(top = 16.dp, bottom = 8.dp, end = 8.dp)
         )
         Button(
-            onClick = {},
+            onClick = { onClick() },
             colors = ButtonDefaults.buttonColors(containerColor = Orange),
             modifier = Modifier
                 .fillMaxWidth(),
             shape = RoundedCornerShape(20),
         ) {
-            Text(text = "Lanjut ke Pembayaran", color = Color.White)
+            Text(text = "Checkout", color = Color.White)
         }
     }
 }

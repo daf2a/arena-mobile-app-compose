@@ -37,9 +37,11 @@ fun SelectFieldScreen(navController: NavController) {
             ) {
                 FieldSelectionComponent()
                 DateSelectionComponent()
-                TimeSlotSelectionComponent(onClick = {
-                    navController.navigate("order_review_screen")
-                })
+                TimeSlotSelectionComponent(
+                    onClick = {
+                        navController.navigate("order_review_screen")
+                    }
+                )
             }
         }
     )

@@ -25,17 +25,8 @@ fun UserHomeScreen(navController: NavController) {
         },
         bottomBar = {
             UserBottomNavigation(
-                selectedTab = selectedTab,
-                onTabSelected = {
-                    selectedTab = it
-                    navController.navigate(it) {
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }
+                navController = navController,
+                selectedTab = selectedTab
             )
         }
     )
@@ -58,8 +49,8 @@ fun HomeContent(navController: NavController, paddingValues: PaddingValues) {
 
     val popularVenues = remember {
         listOf(
-            Venue("BBS Futsal Sport", "Kepuh Gg 1D No.50, Surabaya", 5.0, "30.000 - 50.000", R.drawable.iv_venue_1, listOf("Badminton", "Futsal")),
-            Venue("MPN Arena", "Sukolilo Gg 2, Surabaya", 4.8, "30.000 - 50.000", R.drawable.iv_venue_2, listOf("Badminton"))
+            Venue("BBS Futsal Sport", "Kepuh Gg 1D No.50, Surabaya", 5.0, "30.000 - 50.000", R.drawable.iv_venue_2, listOf("Badminton", "Futsal")),
+            Venue("MPN Arena", "Sukolilo Gg 2, Surabaya", 4.8, "30.000 - 50.000", R.drawable.iv_venue_1, listOf("Badminton"))
         )
     }
 

@@ -60,7 +60,7 @@ fun UserListVenueScreen(navController: NavController, title: String) {
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(3) { index ->
+                items(10) { index ->
                     ListVenueItem(
                         navController = navController,
                         venue = Venue(
@@ -68,7 +68,7 @@ fun UserListVenueScreen(navController: NavController, title: String) {
                             location = "BMC Sukolilo, Surabaya",
                             rating = 5.0,
                             priceRange = "30.000 - 50.000",
-                            image = R.drawable.iv_venue_1,
+                            image = R.drawable.iv_venue_2,
                             tags = listOf("Badminton", "Futsal")
                         )
                     )

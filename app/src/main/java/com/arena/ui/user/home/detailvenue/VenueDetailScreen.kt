@@ -189,6 +189,7 @@ fun VenueDetailContentLayout(
             Text(
                 text = "${selectedImageIndex + 1}/${images.size}",
                 color = Color.Black,
+                fontSize = 12.sp,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(8.dp)

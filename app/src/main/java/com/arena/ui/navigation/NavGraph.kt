@@ -3,9 +3,11 @@ package com.arena.ui.navigation
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.arena.domain.model.Venue
 import com.arena.ui.auth.LoginScreen
 import com.arena.ui.auth.OnboardingGate1
@@ -20,7 +22,9 @@ import com.arena.ui.splash.SplashScreen
 import com.arena.ui.user.chat.ChatScreen
 import com.arena.ui.user.home.detailvenue.VenueDetailScreen
 import com.arena.ui.user.home.homescreen.UserHomeScreen
+import com.arena.ui.user.home.listvenue.UserListVenueScreen
 import com.arena.ui.user.home.orderreview.OrderReviewScreen
+import com.arena.ui.user.home.search.SearchScreen
 import com.arena.ui.user.home.selectfield.SelectFieldScreen
 import com.arena.ui.user.profile.ProfileScreen
 import com.google.gson.Gson
@@ -57,6 +61,14 @@ fun NavGraph(startDestination: String = "user_home") {
             val venue = Gson().fromJson(venueJson, Venue::class.java)
             VenueDetailScreen(navController = navController, venue = venue)
         }
+        composable(
+            "list_venue_screen/{title}",
+            arguments = listOf(navArgument("title") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val title = backStackEntry.arguments?.getString("title") ?: "List Venue"
+            UserListVenueScreen(navController, title)
+        }
+        composable("search_screen") { SearchScreen(navController = navController) }
         composable("select_field_screen") {
             SelectFieldScreen(navController = navController)
         }

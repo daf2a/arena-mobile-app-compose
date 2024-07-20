@@ -15,11 +15,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.arena.R
 import com.arena.ui.theme.Orange
 
 @Composable
-fun HomeTopBar() {
+fun HomeTopBar(navController: NavController) {
     var hasNotifications by remember { mutableStateOf(false) }
 
     Column(
@@ -77,6 +78,6 @@ fun HomeTopBar() {
             }
         }
         Spacer(modifier = Modifier.height(12.dp))
-        SearchBar()
+        SearchBar(navController)
     }
 }

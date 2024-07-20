@@ -147,7 +147,7 @@ fun VenueItem(navController: NavController, venue: Venue) {
 }
 
 @Composable
-fun SectionHeader(title: String) {
+fun SectionHeader(title: String, navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -156,12 +156,12 @@ fun SectionHeader(title: String) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(text = title, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
-        Text(text = "Lihat Semua", fontWeight = FontWeight.Medium, fontSize = 12.sp, color = Color(0xFFFB6D3A), modifier = Modifier.clickable { /* TODO: Handle see all click */ })
+        Text(text = "Lihat Semua", fontWeight = FontWeight.Medium, fontSize = 12.sp, color = Color(0xFFFB6D3A), modifier = Modifier.clickable { navController.navigate("list_venue_screen/${title}") })
     }
 }
 
 @Composable
-fun SportCategoriesRow(categories: List<SportCategory>) {
+fun SportCategoriesRow(categories: List<SportCategory>, navController: NavController) {
     LazyRow(
         modifier = Modifier
             .padding(start = 0.dp, top = 20.dp, bottom = 20.dp, end = 0.dp),
@@ -172,13 +172,16 @@ fun SportCategoriesRow(categories: List<SportCategory>) {
             Column(
                 modifier = Modifier
                     .width(80.dp)
-                    .clickable { /* TODO: Handle category click */ },
+                    .clickable {
+                        navController.navigate("list_venue_screen/${category.name}")
+                    },
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
                     painter = painterResource(id = category.icon),
                     contentDescription = category.name,
-                    modifier = Modifier.size(56.dp)
+                    modifier = Modifier.size(56.dp),
+                    contentScale = ContentScale.Crop
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = category.name, fontSize = 12.sp, textAlign = TextAlign.Center)

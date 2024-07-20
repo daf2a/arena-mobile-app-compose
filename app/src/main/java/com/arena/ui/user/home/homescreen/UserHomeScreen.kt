@@ -72,7 +72,7 @@ fun HomeContent(navController: NavController, paddingValues: PaddingValues) {
 
     LazyColumn {
         item {
-            HomeTopBar()
+            HomeTopBar(navController)
         }
         item {
             Column(
@@ -82,11 +82,11 @@ fun HomeContent(navController: NavController, paddingValues: PaddingValues) {
                     .padding(paddingValues)
                     .padding(start = 16.dp, top = 0.dp, bottom = 10.dp, end = 0.dp)
             ) {
-                SportCategoriesRow(sportCategories)
-                SectionHeader(title = "Venue Terpopuler")
+                SportCategoriesRow(sportCategories, navController)
+                SectionHeader(title = "Venue Terpopuler", navController = navController)
                 HorizontalVenueList(venues = popularVenues, navController = navController)
                 InviteFriendBanner()
-                SectionHeader(title = "Venue Terdekat")
+                SectionHeader(title = "Venue Terdekat", navController = navController)
                 HorizontalVenueList(venues = nearbyVenues, navController = navController)
             }
         }

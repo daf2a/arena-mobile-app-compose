@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.arena.R
 import com.arena.domain.model.Venue
 import com.arena.ui.auth.LoginScreen
 import com.arena.ui.auth.OnboardingGate
@@ -21,15 +22,16 @@ import com.arena.ui.user.chat.ChatScreen
 import com.arena.ui.user.home.detailvenue.VenueDetailScreen
 import com.arena.ui.user.home.homescreen.UserHomeScreen
 import com.arena.ui.user.home.listvenue.UserListVenueScreen
-import com.arena.ui.user.home.orderreview.OrderReviewScreen
 import com.arena.ui.user.home.search.SearchScreen
 import com.arena.ui.user.home.selectfield.SelectFieldScreen
+import com.arena.ui.user.orderreview.OrderReviewScreen
+import com.arena.ui.user.payment.PaymentSuccessScreen
 import com.arena.ui.user.profile.ProfileScreen
 import com.google.gson.Gson
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NavGraph(startDestination: String = "splash_screen") {
+fun NavGraph(startDestination: String = "user_home") {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = startDestination) {
         // Splash
@@ -67,7 +69,17 @@ fun NavGraph(startDestination: String = "splash_screen") {
             SelectFieldScreen(navController = navController)
         }
         composable("order_review_screen") {
-            OrderReviewScreen(navController = navController)
+            val venue = com.arena.ui.user.orderreview.Venue(
+                name = "Aurora Futsal",
+                location = "Kepulih Gg.ID No.15",
+                image = R.drawable.iv_venue_2,
+                sessions = listOf("17:00", "18:00", "19:00"),
+                sessionPrices = listOf(50, 50, 75)
+            )
+            OrderReviewScreen(navController = navController, venue = venue)
+        }
+        composable("payment_success_screen") {
+            PaymentSuccessScreen(navController = navController)
         }
         composable("user_chat_screen") { ChatScreen(navController = navController) }
         composable("user_chat_room/{chatName}") { backStackEntry ->

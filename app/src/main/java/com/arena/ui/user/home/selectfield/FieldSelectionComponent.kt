@@ -32,7 +32,9 @@ fun FieldSelectionComponent() {
     var selectedFieldIndex by remember { mutableStateOf(0) }
     val fields = listOf(
         Court("Lapangan A", "Badminton", "10 x 20 meter", R.drawable.iv_venue_1),
-        Court("Lapangan B", "Futsal", "20 x 30 meter", R.drawable.iv_venue_2)
+        Court("Lapangan B", "Futsal", "20 x 30 meter", R.drawable.iv_venue_2),
+        Court("Lapangan C", "Basket", "30 x 40 meter", R.drawable.iv_venue_1),
+        Court("Lapangan D", "Volley", "40 x 50 meter", R.drawable.iv_venue_2),
     )
 
     Column(
@@ -49,7 +51,7 @@ fun FieldSelectionComponent() {
                         .background(Color.White)
                         .border(1.dp, Color.LightGray, RoundedCornerShape(16.dp))
                         .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically // Align content vertically centered
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
                         painter = rememberImagePainter(field.image),
@@ -63,7 +65,7 @@ fun FieldSelectionComponent() {
                     Spacer(modifier = Modifier.width(16.dp))
                     Column(
                         verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.Start // Align text to start (left)
+                        horizontalAlignment = Alignment.Start
                     ) {
                         Text(
                             text = field.type,

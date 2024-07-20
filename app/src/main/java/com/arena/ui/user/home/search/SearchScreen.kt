@@ -10,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -36,14 +37,17 @@ fun SearchScreen(navController: NavController) {
             placeholder = { Text(text = "Search", color = Color.Gray) },
             leadingIcon = {
                 Icon(
-                    painterResource(id = R.drawable.ic_search),
+                    painterResource(id = R.drawable.ic_arrow_left),
                     contentDescription = "Search",
-                    tint = Color.Gray
+                    tint = Color.Gray,
+                    modifier = Modifier.clickable {
+                        navController.popBackStack()
+                    }
                 )
             },
             trailingIcon = {
                 Icon(
-                    painterResource(id = R.drawable.ic_arrow_right),
+                    painterResource(id = R.drawable.ic_search),
                     contentDescription = "Enter",
                     tint = Color.Gray,
                     modifier = Modifier.clickable {
@@ -62,7 +66,12 @@ fun SearchScreen(navController: NavController) {
             )
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Pencarian Terakhir", style = MaterialTheme.typography.bodyMedium)
+        Text(
+            text = "Pencarian Terakhir",
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
         Spacer(modifier = Modifier.height(8.dp))
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp)

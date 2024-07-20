@@ -57,17 +57,8 @@ fun ChatScreen(navController: NavController) {
         },
         bottomBar = {
             UserBottomNavigation(
-                selectedTab = selectedTab,
-                onTabSelected = {
-                    selectedTab = it
-                    navController.navigate(it) {
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }
+                navController = navController,
+                selectedTab = selectedTab
             )
         }
     )

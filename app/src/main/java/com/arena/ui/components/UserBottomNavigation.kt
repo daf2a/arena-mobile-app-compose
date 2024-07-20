@@ -8,13 +8,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.arena.R
 import com.arena.ui.theme.Orange
 
 data class BottomNavItem(val title: String, val icon: Int, val screenRoute: String)
 
 @Composable
-fun UserBottomNavigation(selectedTab: String, onTabSelected: (String) -> Unit) {
+fun UserBottomNavigation(navController: NavController, selectedTab: String) {
     NavigationBar(
         containerColor = Color.White,
         modifier = Modifier
@@ -48,7 +49,17 @@ fun UserBottomNavigation(selectedTab: String, onTabSelected: (String) -> Unit) {
                     )
                 },
                 selected = isSelected,
-                onClick = { onTabSelected(item.screenRoute) },
+                onClick = {
+                    if (item.screenRoute != selectedTab) {
+                        navController.navigate(item.screenRoute) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = Orange,
                     unselectedIconColor = Color(0xFFD2CFD6),

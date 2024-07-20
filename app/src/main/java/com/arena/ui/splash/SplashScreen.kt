@@ -15,8 +15,8 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashScreen(navController: NavHostController) {
     LaunchedEffect(key1 = true) {
-        delay(3000) // Delay for 3 seconds
-        navController.navigate("onboarding_screen_1")
+        delay(3000)
+        navController.navigate("onboarding_screen")
     }
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

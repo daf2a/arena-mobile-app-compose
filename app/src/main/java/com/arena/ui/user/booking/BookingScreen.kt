@@ -1,6 +1,7 @@
 package com.arena.ui.user.booking
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -80,19 +81,20 @@ fun BookingContent(paddingValues: PaddingValues, navController: NavController) {
         Spacer(modifier = Modifier.height(16.dp))
         LazyColumn {
             items(bookings) { booking ->
-                BookingItem(booking)
+                BookingItem(booking, navController)
             }
         }
     }
 }
 
 @Composable
-fun BookingItem(booking: Booking) {
+fun BookingItem(booking: Booking, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .background(Color.White, shape = RoundedCornerShape(8.dp))
+            .clickable { navController.navigate("order_detail_screen") }
             .padding(16.dp)
     ) {
         Row(

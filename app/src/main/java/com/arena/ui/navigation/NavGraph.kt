@@ -18,6 +18,7 @@ import com.arena.ui.mitra.*
 import com.arena.ui.user.booking.BookingScreen
 import com.arena.ui.user.chat.ChatRoomScreen
 import com.arena.ui.splash.SplashScreen
+import com.arena.ui.user.booking.OrderDetailScreen
 import com.arena.ui.user.chat.ChatScreen
 import com.arena.ui.user.home.detailvenue.VenueDetailScreen
 import com.arena.ui.user.home.homescreen.UserHomeScreen
@@ -87,6 +88,7 @@ fun NavGraph(startDestination: String = "user_home") {
             ChatRoomScreen(navController = navController, chatName = chatName)
         }
         composable("user_booking_screen") { BookingScreen(navController = navController) }
+        composable("order_detail_screen") { OrderDetailScreen(navController = navController) }
         composable("user_profile_screen") { ProfileScreen(navController = navController) }
 
         // Mitra
